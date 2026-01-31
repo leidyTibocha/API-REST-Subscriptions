@@ -21,28 +21,28 @@ public class ControllerSubscription {
 
     @PostMapping("/subscriptions")
     public ResponseEntity<SubscriptionResponse> createSubscription(@RequestBody  CreateSubscriptionRequest createSubscriptionRequest){
-        return  ResponseEntity.status(HttpStatus.CREATED).build();
+        return  ResponseEntity.status(HttpStatus.CREATED).body(subscriptionService.createSubscription(createSubscriptionRequest));
     }
 
     @PutMapping("/change-plan")
-    public ResponseEntity changePlan (@RequestBody ChangePlanRequest changePlanRequest){
-        return ResponseEntity.ok().build();
+    public ResponseEntity<SubscriptionResponse> changePlan (@RequestBody ChangePlanRequest changePlanRequest){
+        return ResponseEntity.status(HttpStatus.CREATED).body(subscriptionService.changePlan(changePlanRequest));
     }
 
     @PutMapping("/cancel/{userId}")
     public ResponseEntity<SubscriptionCanceledResponse> cancelSubscription(@PathVariable Long userId){
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(subscriptionService.cancelSubscription(userId));
     }
 
     @GetMapping("/subscriptions/user/{userId}")
     public ResponseEntity<SubscriptionResponse> getSubscription(@PathVariable Long userId){
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(subscriptionService.getSubscription(userId));
     }
 
 
     @GetMapping("/all-subscriptions")
     public ResponseEntity<List<SubscriptionResponse>> getAllSubscriptions(){
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(subscriptionService.getAllSubscriptions());
     }
 
 }

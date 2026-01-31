@@ -7,10 +7,11 @@ import com.musicPlay.music_play.domain.model.Subscription;
 import java.util.List;
 
 public interface SubscriptionRepository {
-     void createSubscription();
-     void changePlan();
-     void cancelSubscription();
-     Subscription getSubscription();
+     void saveSubscription(Subscription subscription);
+     void cancelSubscription(Subscription subscription);
+     Subscription getSubscription(Long id);
      List<Subscription> getAllSubscriptions();
+     Subscription findByUserIdAndAutoRenewTrue(Long id);
+
 
 }

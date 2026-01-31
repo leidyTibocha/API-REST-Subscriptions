@@ -17,7 +17,7 @@ public class SubscriptionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false, unique = false)
     Long userId;
     @Column(name = "start_date", nullable = false)
     LocalDate startDate;
@@ -27,5 +27,7 @@ public class SubscriptionEntity {
     String plan;
     @Column(name = "status", nullable = false)
     String status;
+    @Column(name = "auto_renew", nullable = false)
+    boolean autoRenew;
 
 }

@@ -1,0 +1,11 @@
+# Ignore build output and git metadata
+target/
+.git
+.idea
+*.iml
+.DS_Store
+logs/
+
+# OS / Editor
+.vscode/
+*.log

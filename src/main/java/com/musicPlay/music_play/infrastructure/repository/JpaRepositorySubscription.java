@@ -7,6 +7,7 @@ import com.musicPlay.music_play.infrastructure.entity.SubscriptionEntity;
 import com.musicPlay.music_play.infrastructure.mapper.MapperSubscription;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -47,5 +48,7 @@ public class JpaRepositorySubscription implements SubscriptionRepository {
         return mapperSubscription.toDomain(subscriptionEntity);
     }
 
-
+    public List<Subscription> findAllByEndDateLessThanEqualAndStatus(LocalDate localDate, String status){
+        return mapperSubscription.toDomainList(crudSubscription.findAllByEndDateLessThanEqualAndStatus(localDate, status));
+    }
 }

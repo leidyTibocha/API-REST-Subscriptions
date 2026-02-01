@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class RestExceptionSubscription {
 
+
     @ExceptionHandler(InvalidSubscriptionException.class)
     public ResponseEntity<ErrorInfo> handleInvalidSubscriptionException(InvalidSubscriptionException ex) {
         ErrorInfo errorInfo = new ErrorInfo("InvalidSubscriptionException:", ex.getMessage());

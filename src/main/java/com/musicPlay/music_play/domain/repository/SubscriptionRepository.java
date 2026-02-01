@@ -4,6 +4,7 @@ import com.musicPlay.music_play.api.dto.SubscriptionCanceledResponse;
 import com.musicPlay.music_play.api.dto.SubscriptionResponse;
 import com.musicPlay.music_play.domain.model.Subscription;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface SubscriptionRepository {
@@ -12,6 +13,6 @@ public interface SubscriptionRepository {
      Subscription getSubscription(Long id);
      List<Subscription> getAllSubscriptions();
      Subscription findByUserIdAndAutoRenewTrue(Long id);
-
+    List<Subscription> findAllByEndDateLessThanEqualAndStatus(LocalDate localDate, String status);
 
 }

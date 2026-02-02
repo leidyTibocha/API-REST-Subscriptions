@@ -75,7 +75,6 @@ También puedes usar `docker compose` para levantar la base de datos y la app co
 **Notas:**
 - Valores válidos para `plan`: **PREMIUM**, **FAMILY** (en mayúsculas).
 - Errores comunes: `InvalidSubscriptionException` → 400 Bad Request; `SubscriptionDoesNotExist` → 404 Not Found; excepciones no controladas → 500 Internal Server Error.
-- Se recomienda añadir validaciones (`@NotNull`, `@Valid`) en los DTOs para evitar entradas inválidas.
 
 ---
 
@@ -104,7 +103,7 @@ curl -X PUT http://localhost:8080/cancel/1
 ##  Notas y configuración adicional
 
 - Perfiles: **dev** (usa PostgreSQL con `application-dev.properties`) y **test** (H2 en memoria para ejecutar la suite de tests sin dependencias externas).
-- Para cambiar la configuración de la base de datos en desarrollo, edita `src/main/resources/application-dev.properties` o usa variables de entorno:
+- Para cambiar la configuración de la base de datos en desarrollo, editar `src/main/resources/application-dev.properties` o usa variables de entorno:
   - `SPRING_DATASOURCE_URL` (ej. `jdbc:postgresql://localhost:5432/music_play`)
   - `SPRING_DATASOURCE_USERNAME`
   - `SPRING_DATASOURCE_PASSWORD`
@@ -115,7 +114,6 @@ curl -X PUT http://localhost:8080/cancel/1
 ./mvnw.cmd test
 ```
 
-- Seguridad: no incluyas credenciales en el repo; usa variables de entorno o secretos en CI.
 
 ---
 

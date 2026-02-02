@@ -40,12 +40,14 @@ class ControllerSubscriptionTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new ControllerSubscription(subscriptionService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new ControllerSubscription(subscriptionService))
+                .setControllerAdvice(new com.musicPlay.music_play.api.exception.RestExceptionSubscription())
+                .build();
         objectMapper = new ObjectMapper();
     }
 
     @Test
-    @DisplayName("POST /subscriptions - Debe crear una suscripción y devolver 201")
+    @DisplayName("POST /subscriptions - You must create a subscription and return 201")
     void createSubscription_ReturnsCreated() throws Exception {
         CreateSubscriptionRequest request = new CreateSubscriptionRequest(1L, "PREMIUM");
         SubscriptionResponse response = new SubscriptionResponse(100L, "ACTIVE", "PREMIUM", LocalDate.now(), LocalDate.now().plusDays(30));
@@ -61,7 +63,7 @@ class ControllerSubscriptionTest {
     }
 
     @Test
-    @DisplayName("PUT /change-plan - Debe devolver 201 al cambiar de plan")
+    @DisplayName("PUT /change-plan - You must return 201 when changing plans")
     void changePlan_ReturnsCreated() throws Exception {
         ChangePlanRequest request = new ChangePlanRequest(1L, "FAMILY");
         SubscriptionResponse response = new SubscriptionResponse(101L, "ACTIVE", "FAMILY", LocalDate.now(), LocalDate.now().plusDays(30));
@@ -76,7 +78,7 @@ class ControllerSubscriptionTest {
     }
 
     @Test
-    @DisplayName("PUT /cancel/{userId} - Debe devolver 200 al cancelar")
+    @DisplayName("PUT /cancel/{userId} - You must return 200 upon cancellation")
     void cancelSubscription_ReturnsOk() throws Exception {
         SubscriptionCanceledResponse response = new SubscriptionCanceledResponse("CANCELLED", "Subscription cancelled");
 
@@ -88,7 +90,16 @@ class ControllerSubscriptionTest {
     }
 
     @Test
-    @DisplayName("GET /subscriptions/user/{userId} - Debe devolver 200 y la suscripción")
+    @DisplayName("PUT /cancel/{userId} - 404 when subscription does not exist")
+    void cancelSubscription_ReturnsNotFound_WhenNotExists() throws Exception {
+        when(subscriptionService.cancelSubscription(2L)).thenThrow(new com.musicPlay.music_play.domain.exception.SubscriptionDoesNotExist());
+
+        mockMvc.perform(put("/cancel/2"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /subscriptions/user/{userId} - You must return 200 and the subscription")
     void getSubscription_ReturnsOk() throws Exception {
         SubscriptionResponse response = new SubscriptionResponse(100L, "ACTIVE", "PREMIUM", LocalDate.now(), LocalDate.now().plusDays(30));
 
@@ -100,7 +111,7 @@ class ControllerSubscriptionTest {
     }
 
     @Test
-    @DisplayName("GET /all-subscriptions - Debe devolver la lista de suscripciones")
+    @DisplayName("GET /all-subscriptions - You must return the subscription list")
     void getAllSubscriptions_ReturnsList() throws Exception {
         SubscriptionResponse res = new SubscriptionResponse(100L, "ACTIVE", "PREMIUM", LocalDate.now(), LocalDate.now().plusDays(30));
         when(subscriptionService.getAllSubscriptions()).thenReturn(List.of(res));

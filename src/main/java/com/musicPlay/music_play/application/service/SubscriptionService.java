@@ -30,9 +30,9 @@ public class SubscriptionService {
         this.mapperSubscription = mapperSubscription;
     }
 
+
     /**
-     * Create a subscription for a user.
-     * Validates that the user does not already have an auto-renewing subscription.
+     * Create a subscription for a user. Validates that the user does not already have an auto-renewing subscription.
      * @param createSubscriptionRequest payload with userId and plan
      * @return created SubscriptionResponse
      * @throws InvalidSubscriptionException if the user already has a renewing subscription
@@ -46,6 +46,7 @@ public class SubscriptionService {
         subscriptionRepository.saveSubscription(subscription);
         return mapperSubscription.toResponse(subscription);
     }
+
 
     /**
      * Change the plan for an existing user's subscription.
@@ -67,6 +68,7 @@ public class SubscriptionService {
         return mapperSubscription.toResponse(subscription1);
     }
 
+
     /**
      * Cancel the active subscription for the given user id.
      * @param userId id of the user
@@ -75,10 +77,14 @@ public class SubscriptionService {
     @Transactional
     public SubscriptionCanceledResponse cancelSubscription(Long userId){
         Subscription subscription = subscriptionRepository.findByUserIdAndAutoRenewTrue(userId);
+        if (subscription == null) {
+            throw new com.musicPlay.music_play.domain.exception.SubscriptionDoesNotExist();
+        }
         subscription.cancel();
         subscriptionRepository.cancelSubscription(subscription);
         return new SubscriptionCanceledResponse(mapperSubscription.mapStatusToString(subscription.getStatus()), "Subscription cancelled");
     }
+
 
     /**
      * Retrieve the active subscription for a user.
@@ -93,6 +99,7 @@ public class SubscriptionService {
         }
         return mapperSubscription.toResponse(subscription);
     }
+
 
     /**
      * Retrieve all subscriptions in the system.

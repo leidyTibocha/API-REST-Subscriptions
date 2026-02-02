@@ -1,4 +1,4 @@
-package com.musicPlay.music_play.application.scheluder;
+package com.musicPlay.music_play.application.scheduler;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +18,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.musicPlay.music_play.application.scheduler.SubscriptionScheduler;
 import com.musicPlay.music_play.domain.model.Subscription;
 import com.musicPlay.music_play.domain.model.SubscriptionPlan;
 import com.musicPlay.music_play.domain.model.SubscriptionStatus;
@@ -34,9 +33,9 @@ class SubscriptionSchedulerTest {
     private SubscriptionScheduler subscriptionScheduler;
 
     @Test
-    @DisplayName("Debe renovar suscripción cuando está ACTIVE y autoRenew es true")
+    @DisplayName("You must renew your subscription when it is ACTIVE and autoRenew is true")
     void shouldRenewSubscriptionWhenActiveAndAutoRenewTrue() {
-        // Arrange: Una suscripción que vence hoy, activa y con autorenovación
+        // Arrange: A subscription that expires today, is active and has auto-renewal
         Subscription subToRenew = new Subscription(1L, 1L, LocalDate.now().minusDays(30),
                 LocalDate.now(), SubscriptionPlan.PREMIUM, SubscriptionStatus.ACTIVE, true);
 
@@ -49,15 +48,15 @@ class SubscriptionSchedulerTest {
         subscriptionScheduler.processSubscriptionsLifecycle();
 
         // Assert
-        // Se debe guardar 2 veces: la vieja expirada y la nueva renovada
+        // // You must save twice: the old expired one and the new renewed one
         verify(subscriptionRepository, times(2)).saveSubscription(any(Subscription.class));
         assertEquals(SubscriptionStatus.EXPIRED, subToRenew.getStatus());
     }
 
     @Test
-    @DisplayName("Debe simplemente expirar cuando la suscripción está CANCELLED")
+    @DisplayName("It should simply expire when the subscription is cancelled.")
     void shouldExpireSubscriptionWhenStatusIsCancelled() {
-        // Arrange: Una suscripción que el usuario canceló previamente (autoRenew se pone false al cancelar)
+        // Arrange: A subscription that the user previously cancelled (autoRenew is set to false upon cancellation)
         Subscription cancelledSub = new Subscription(1L, 1L, LocalDate.now().minusDays(30),
                 LocalDate.now(), SubscriptionPlan.PREMIUM, SubscriptionStatus.CANCELLED, false);
 
@@ -70,13 +69,13 @@ class SubscriptionSchedulerTest {
         subscriptionScheduler.processSubscriptionsLifecycle();
 
         // Assert
-        // Solo se debe guardar 1 vez (la actualización a EXPIRED)
+        // You only need to save once (the update to EXPIRED)
         verify(subscriptionRepository, times(1)).saveSubscription(any(Subscription.class));
         assertEquals(SubscriptionStatus.EXPIRED, cancelledSub.getStatus());
     }
 
     @Test
-    @DisplayName("Debe continuar procesando si una suscripción falla ")
+    @DisplayName("Two subscriptions, the first one will throw an error")
     void shouldContinueProcessingWhenOneSubscriptionFails() {
         // Arrange: Dos suscripciones, la primera lanzará un error
         Subscription sub1 = mock(Subscription.class);
@@ -93,7 +92,6 @@ class SubscriptionSchedulerTest {
         subscriptionScheduler.processSubscriptionsLifecycle();
 
         // Assert
-        // Verificamos que aunque sub1 falló, sub2 se procesó
         verify(subscriptionRepository, atLeastOnce()).saveSubscription(sub2);
     }
 }

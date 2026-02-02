@@ -21,6 +21,7 @@ import com.musicPlay.music_play.api.dto.ChangePlanRequest;
 import com.musicPlay.music_play.api.dto.CreateSubscriptionRequest;
 import com.musicPlay.music_play.api.dto.SubscriptionResponse;
 import com.musicPlay.music_play.domain.exception.InvalidSubscriptionException;
+import com.musicPlay.music_play.domain.exception.SubscriptionDoesNotExist;
 import com.musicPlay.music_play.domain.model.Subscription;
 import com.musicPlay.music_play.domain.model.SubscriptionPlan;
 import com.musicPlay.music_play.domain.model.SubscriptionStatus;
@@ -48,7 +49,7 @@ class SubscriptionServiceTest {
     }
 
     @Test
-    @DisplayName("Debe crear suscripción exitosamente cuando no existe una previa")
+    @DisplayName("You should be able to create a subscription successfully when one does not already exist.")
     void createSubscription_Success() {
         // Arrange
         CreateSubscriptionRequest request = new CreateSubscriptionRequest(userId, "PREMIUM");
@@ -65,7 +66,7 @@ class SubscriptionServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción al crear si ya existe una suscripción activa")
+    @DisplayName("You must throw an exception when creating if an active subscription already exists.")
     void createSubscription_ThrowsException_WhenAlreadyExists() {
         // Arrange
         CreateSubscriptionRequest request = new CreateSubscriptionRequest(userId, "PREMIUM");
@@ -77,7 +78,7 @@ class SubscriptionServiceTest {
     }
 
     @Test
-    @DisplayName("Debe cambiar el plan correctamente cancelando la anterior y creando una nueva")
+    @DisplayName("You must change the plan correctly by canceling the old one and creating a new one.")
     void changePlan_Success() {
         // Arrange
         ChangePlanRequest request = new ChangePlanRequest(userId, "FAMILY");
@@ -88,23 +89,22 @@ class SubscriptionServiceTest {
         subscriptionService.changePlan(request);
 
         // Assert
-        // Verificamos que se guardó dos veces (una para la vieja cancelada y otra para la nueva)
         verify(subscriptionRepository, times(2)).saveSubscription(any(Subscription.class));
         assertEquals(SubscriptionStatus.CANCELLED, dummySubscription.getStatus());
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción al cancelar si la suscripción no existe")
+    @DisplayName("You must throw an exception when canceling if the subscription does not exist.")
     void cancelSubscription_ThrowsException_WhenNotFound() {
         // Arrange
         when(subscriptionRepository.findByUserIdAndAutoRenewTrue(userId)).thenReturn(null);
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> subscriptionService.cancelSubscription(userId));
+        assertThrows(SubscriptionDoesNotExist.class, () -> subscriptionService.cancelSubscription(userId));
     }
 
     @Test
-    @DisplayName("Debe obtener la suscripción correctamente")
+    @DisplayName("You must obtain the subscription correctly")
     void getSubscription_Success() {
         // Arrange
         when(subscriptionRepository.findByUserIdAndAutoRenewTrue(userId)).thenReturn(dummySubscription);

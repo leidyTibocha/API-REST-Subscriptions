@@ -73,7 +73,7 @@ También puedes usar `docker compose` para levantar la base de datos y la app co
 | GET    | `/all-subscriptions` | - | Obtener todas las suscripciones | **200 OK** |
 
 **Notas:**
-- Valores válidos para `plan`: **PREMIUM**, **FAMILY** (exacto, en mayúsculas).
+- Valores válidos para `plan`: **PREMIUM**, **FAMILY** (en mayúsculas).
 - Errores comunes: `InvalidSubscriptionException` → 400 Bad Request; `SubscriptionDoesNotExist` → 404 Not Found; excepciones no controladas → 500 Internal Server Error.
 - Se recomienda añadir validaciones (`@NotNull`, `@Valid`) en los DTOs para evitar entradas inválidas.
 

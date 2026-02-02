@@ -49,6 +49,13 @@ public class RestExceptionSubscription {
         return ResponseEntity.badRequest().body(errorInfo);
     }
 
+    /**
+     * Handles cases where a requested subscription cannot be found in the system.
+     * This occurs when an operation (find, update, cancel) is attempted on a non-existent ID.
+     * * @param ex The {@link SubscriptionDoesNotExist} exception instance.
+     * @return A {@link ResponseEntity} containing an {@link ErrorInfo} object with a
+     * 404 (Not Found) HTTP status code.
+     */
     @ExceptionHandler(SubscriptionDoesNotExist.class)
     public ResponseEntity<ErrorInfo> handleSubscriptionNotFound(SubscriptionDoesNotExist ex) {
         ErrorInfo errorInfo = new ErrorInfo("SubscriptionDoesNotExist:", ex.getMessage());

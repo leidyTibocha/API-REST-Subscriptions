@@ -18,11 +18,11 @@ import com.musicPlay.music_play.domain.exception.SubscriptionCannotBeRenewedExce
 class SubscriptionTest {
 
     @Nested
-    @DisplayName("Tests de Creación y Validación")
+    @DisplayName("Creation and Validation Tests")
     class CreationTests {
 
         @Test
-        @DisplayName("Debe crear una suscripción válida con valores por defecto")
+        @DisplayName("You must create a valid subscription with default values")
         void shouldCreateValidSubscription() {
             Subscription subscription = new Subscription(1L, SubscriptionPlan.PREMIUM);
 
@@ -37,14 +37,14 @@ class SubscriptionTest {
         }
 
         @Test
-        @DisplayName("Debe lanzar excepción si el userId es nulo")
+        @DisplayName("It should throw an exception if the userId is null.")
         void shouldThrowExceptionWhenUserIdIsNull() {
             assertThrows(InvalidSubscriptionException.class,
                     () -> new Subscription(null, SubscriptionPlan.PREMIUM));
         }
 
         @Test
-        @DisplayName("Debe lanzar excepción si las fechas son inconsistentes")
+        @DisplayName("It should throw an exception if the dates are inconsistent.")
         void shouldThrowExceptionWhenEndDateIsBeforeStartDate() {
             assertThrows(InvalidSubscriptionException.class,
                     () -> new Subscription(1L, 1L, LocalDate.now(), LocalDate.now().minusDays(1),
@@ -53,11 +53,11 @@ class SubscriptionTest {
     }
 
     @Nested
-    @DisplayName("Tests de Ciclo de Vida (Cancelar, Expirar, Renovar)")
+    @DisplayName("Life Cycle Tests (Cancel, Expire, Renew)")
     class LifecycleTests {
 
         @Test
-        @DisplayName("Debe cancelar una suscripción activa correctamente")
+        @DisplayName("You must cancel an active subscription correctly.")
         void shouldCancelActiveSubscription() {
             Subscription subscription = new Subscription(1L, SubscriptionPlan.PREMIUM);
 
@@ -68,7 +68,7 @@ class SubscriptionTest {
         }
 
         @Test
-        @DisplayName("Debe lanzar excepción al intentar cancelar una suscripción ya expirada")
+        @DisplayName("You must throw an exception when trying to cancel an expired subscription.")
         void shouldThrowExceptionWhenCancelingNonActiveSubscription() {
             Subscription subscription = new Subscription(1L, 1L, LocalDate.now().minusDays(40),
                     LocalDate.now().minusDays(10), SubscriptionPlan.PREMIUM, SubscriptionStatus.EXPIRED, false);
@@ -77,7 +77,7 @@ class SubscriptionTest {
         }
 
         @Test
-        @DisplayName("Debe renovar correctamente si es activa y tiene autoRenew")
+        @DisplayName("You must renew correctly if it is active and has autoRenew enabled.")
         void shouldRenewSuccessfully() {
             Subscription oldSubscription = new Subscription(1L, SubscriptionPlan.FAMILY);
 
@@ -90,7 +90,7 @@ class SubscriptionTest {
         }
 
         @Test
-        @DisplayName("Debe lanzar excepción al renovar una suscripción cancelada")
+        @DisplayName("You must create an exception when renewing a cancelled subscription")
         void shouldThrowExceptionWhenRenewingCancelledSubscription() {
             Subscription subscription = new Subscription(1L, SubscriptionPlan.PREMIUM);
             subscription.cancel();
@@ -99,7 +99,7 @@ class SubscriptionTest {
         }
 
         @Test
-        @DisplayName("Debe expirar correctamente si la fecha de fin llegó o pasó")
+        @DisplayName("It should expire correctly if the end date has arrived or passed")
         void shouldExpireWhenEndDateIsTodayOrPast() {
             // Reclimatizamos una suscripción que vence hoy
             Subscription subscription = new Subscription(1L, 1L, LocalDate.now().minusDays(30),
@@ -114,11 +114,11 @@ class SubscriptionTest {
     }
 
     @Nested
-    @DisplayName("Tests de Cambio de Plan y Acceso")
+    @DisplayName("Plan Change and Access Tests")
     class AccessAndReplacementTests {
 
         @Test
-        @DisplayName("markAsReplaced debe cancelar y terminar la suscripción hoy")
+        @DisplayName("markAsReplaced You must cancel and terminate your subscription today.")
         void shouldMarkAsReplacedCorrectly() {
             Subscription subscription = new Subscription(1L, SubscriptionPlan.PREMIUM);
 
@@ -130,7 +130,7 @@ class SubscriptionTest {
         }
 
         @Test
-        @DisplayName("hasAccess debe retornar falso si el status es EXPIRED")
+        @DisplayName("hasAccess It should return false if the status is EXPIRED")
         void hasAccessShouldReturnFalseWhenExpired() {
             Subscription subscription = new Subscription(1L, 1L, LocalDate.now().minusDays(30),
                     LocalDate.now().plusDays(5), SubscriptionPlan.PREMIUM, SubscriptionStatus.EXPIRED, false);

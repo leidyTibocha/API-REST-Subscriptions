@@ -17,10 +17,11 @@ import com.musicPlay.music_play.infrastructure.entity.SubscriptionEntity;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface MapperSubscription {
-    // De Entidad a Dominio (Usa el constructor con todos los argumentos)
+
+    // From Entity to Domain (Use the constructor with all arguments)
     Subscription toDomain(SubscriptionEntity subscriptionEntity);
 
-    // PARA CREAR: De DTO a Dominio
+    //TO CREATE: From DTO to Domain
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "endDate", ignore = true)
@@ -29,14 +30,14 @@ public interface MapperSubscription {
     @Mapping(target = "plan", source = "plan", qualifiedByName = "stringToPlan")
     Subscription toDomainFromRequest(CreateSubscriptionRequest request);
 
-    // De Dominio a Entidad (Para guardar en DB)
+    // From Domain to Entity (To save in DB)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "plan", source = "plan", qualifiedByName = "planToString")
     @Mapping(target = "status", source = "status", qualifiedByName = "statusToString")
     SubscriptionEntity toEntity(Subscription subscription);
 
-    // De Dominio a DTO de Respuesta
+    //From Domain to Response DTO
     @Mapping(target = "subscriptionId", source = "id")
     @Mapping(target = "plan", source = "plan", qualifiedByName = "planToString")
     @Mapping(target = "status", source = "status", qualifiedByName = "statusToString")
@@ -46,7 +47,8 @@ public interface MapperSubscription {
     List<Subscription> toDomainList(List<SubscriptionEntity> entities);
     List<SubscriptionResponse> toResponseList(List<Subscription> domains);
 
-    // --- DE STRING A ENUM (Entrada/Request -> Dominio) ---
+
+    // --- From STRING A ENUM (Entrada/Request -> Dominio) ---
 
     @Named("stringToPlan")
     default SubscriptionPlan mapToPlanEnum(String planName) {
@@ -64,7 +66,7 @@ public interface MapperSubscription {
         return SubscriptionStatus.valueOf(statusName.toUpperCase());
     }
 
-    // --- DE ENUM A STRING (Dominio -> Entidad/Response) ---
+    // --- From ENUM A STRING (Dominio -> Entidad/Response) ---
 
     @Named("planToString")
     default String mapPlanToString(SubscriptionPlan plan) {

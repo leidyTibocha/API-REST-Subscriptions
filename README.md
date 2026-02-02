@@ -33,7 +33,7 @@ Este proyecto implementa una API REST simple para gestionar suscripciones de usu
 
 Si usas Docker/compose, revisa `compose.yaml` para levantar dependencias (p. ej. Postgres).
 
-**Swagger / OpenAPI**: Una vez la aplicación esté corriendo, abre `http://localhost:8080/swagger-ui.html` para acceder a la documentación interactiva y probar los endpoints.
+**Swagger / OpenAPI**: Una vez la aplicación esté corriendo, abre `http://localhost:8080/swagger-ui.html` (o `http://localhost:8080/swagger-ui/index.html` según versión) para acceder a la documentación interactiva. La especificación JSON está disponible en `GET /v3/api-docs`.
 
 ##  Docker - build & run
 Se incluye un `Dockerfile` para facilitar el despliegue en la nube o en entornos de contenedores.
@@ -62,17 +62,20 @@ También puedes usar `docker compose` para levantar la base de datos y la app co
 
 ---
 
-##  Endpoints
+## Endpoints
 
-| Método | Ruta | Cuerpo | Descripción | Código |
-|--------|------|--------|-------------|--------|
-| POST   | /subscriptions | `{ "userId": 1, "plan": "PREMIUM" }` | Crear suscripción | **201 Created** |
-| PUT    | /change-plan | `{ "userId": 1, "newPlan": "FAMILY" }` | Cambiar plan (cancela la previa y crea una nueva) | **201 Created** |
-| PUT    | /cancel/{userId} | - | Cancelar suscripción del usuario | **200 OK** |
-| GET    | /subscriptions/user/{userId} | - | Obtener suscripción activa de un usuario | **200 OK / 404 Not Found** |
-| GET    | /all-subscriptions | - | Obtener todas las suscripciones | **200 OK** |
+| Método | Ruta | Cuerpo | Descripción | Respuesta |
+|--------|------|--------|-------------|----------:|
+| POST   | `/subscriptions` | `{ "userId": 1, "plan": "PREMIUM" }` | Crear suscripción | **201 Created** / **400 Bad Request** (plan inválido o usuario ya tiene suscripción auto-renovable) |
+| PUT    | `/change-plan` | `{ "userId": 1, "newPlan": "FAMILY" }` | Cambiar plan (marca la previa como reemplazada y crea una nueva) | **201 Created** / **400 Bad Request** (plan inválido) / **404 Not Found** (no existe suscripción activa) |
+| PUT    | `/cancel/{userId}` | - | Cancelar suscripción activa del usuario | **200 OK** / **404 Not Found** (no existe suscripción) |
+| GET    | `/subscriptions/user/{userId}` | - | Obtener suscripción activa de un usuario | **200 OK** / **404 Not Found** |
+| GET    | `/all-subscriptions` | - | Obtener todas las suscripciones | **200 OK** |
 
-> Nota: Se corrigió un typo en el enum: ahora los valores son `PREMIUM` y `FAMILY`. Se actualizaron los tests y la documentación para usar `PREMIUM`.
+**Notas:**
+- Valores válidos para `plan`: **PREMIUM**, **FAMILY** (exacto, en mayúsculas).
+- Errores comunes: `InvalidSubscriptionException` → 400 Bad Request; `SubscriptionDoesNotExist` → 404 Not Found; excepciones no controladas → 500 Internal Server Error.
+- Se recomienda añadir validaciones (`@NotNull`, `@Valid`) en los DTOs para evitar entradas inválidas.
 
 ---
 

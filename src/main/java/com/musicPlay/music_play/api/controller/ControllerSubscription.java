@@ -21,13 +21,11 @@ import com.musicPlay.music_play.application.service.SubscriptionService;
  *
  * Exposes endpoints to create, change, cancel and retrieve subscriptions.
  * Endpoints:
- * <ul>
- *   <li>POST   /subscriptions</li>
- *   <li>PUT    /change-plan</li>
- *   <li>PUT    /cancel/{userId}</li>
- *   <li>GET    /subscriptions/user/{userId}</li>
- *   <li>GET    /all-subscriptions</li>
- * </ul>
+ *   POST   /subscriptions
+ *   PUT    /change-plan
+ *   PUT    /cancel/{userId}
+ *   GET    /subscriptions/user/{userId}
+ *   GET    /all-subscriptions
  */
 @RestController
 public class ControllerSubscription {

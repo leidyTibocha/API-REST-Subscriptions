@@ -23,37 +23,49 @@ Tecnologías principales: Java 21, Spring Boot 4.x, Spring Data JPA, MapStruct, 
 
 ---
 
-## 3. Endpoints principales (Resumen) 
+## 3. Endpoints principales (Resumen)
 
-- POST /subscriptions
-  - Crea una suscripción. Body: `CreateSubscriptionRequest` `{ "userId": Long, "plan": String }`.
-  - Respuesta: `SubscriptionResponse` (HTTP 201).
+| Método | Ruta | Cuerpo | Descripción | Respuesta |
+|--------|------|--------|-------------|----------:|
+| POST   | `/subscriptions` | `{ "userId": 1, "plan": "PREMIUM" }` | Crear suscripción | **201 Created** / **400 Bad Request** (plan inválido o usuario ya tiene suscripción auto-renovable) |
+| PUT    | `/change-plan` | `{ "userId": 1, "newPlan": "FAMILY" }` | Cambiar plan (marca la previa como reemplazada y crea una nueva) | **201 Created** / **400 Bad Request** (plan inválido) / **404 Not Found** (no existe suscripción activa) |
+| PUT    | `/cancel/{userId}` | - | Cancelar suscripción activa del usuario | **200 OK** / **404 Not Found** (no existe suscripción) |
+| GET    | `/subscriptions/user/{userId}` | - | Obtener suscripción activa de un usuario | **200 OK** / **404 Not Found** |
+| GET    | `/all-subscriptions` | - | Obtener todas las suscripciones | **200 OK** |
 
-- PUT /change-plan
-  - Cambia el plan de una suscripción activa (marca la anterior como reemplazada y crea una nueva). Body: `ChangePlanRequest` `{ "userId": Long, "newPlan": String }`.
-  - Respuesta: `SubscriptionResponse` (HTTP 201).
-
-- PUT /cancel/{userId}
-  - Cancela la suscripción activa del usuario. Respuesta: `SubscriptionCanceledResponse` (HTTP 200).
-
-- GET /subscriptions/user/{userId}
-  - Obtiene la suscripción activa del usuario. Respuesta: `SubscriptionResponse` (HTTP 200) o error si no existe.
-
-- GET /all-subscriptions
-  - Lista todas las suscripciones. Respuesta: lista de `SubscriptionResponse` (HTTP 200).
+**Notas:**
+- Valores válidos para `plan`: **PREMIUM**, **FAMILY** (exacto, en mayúsculas).
+- Errores comunes: `InvalidSubscriptionException` → 400 Bad Request; `SubscriptionDoesNotExist` → 404 Not Found; excepciones no controladas → 500 Internal Server Error.
+- Se recomienda añadir validaciones (`@NotNull`, `@Valid`) en los DTOs para evitar entradas inválidas.
 
 ---
 
-## 3.1 Documentación automática (OpenAPI / Swagger) 
+## 3.1 Documentación automática (OpenAPI / Swagger)
 
 Se integra **Springdoc OpenAPI** para exponer la especificación OpenAPI y una UI interactiva (Swagger UI):
 
 - JSON OpenAPI: `GET /v3/api-docs`
-- Swagger UI: `http://localhost:8080/swagger-ui.html` (cuando la app corre en localhost:8080)
+- Swagger UI: `http://localhost:8080/swagger-ui.html` (puede redirigir a `http://localhost:8080/swagger-ui/index.html` según la versión de Springdoc)
 
 La configuración (título, descripción, versión y contacto) está en `OpenApiConfig`.
 
 ---
+
+### Validación y contratos de entrada (Inputs & Validation)
+
+- `CreateSubscriptionRequest.userId` — obligatorio.
+- `CreateSubscriptionRequest.plan` — obligatorio; valores permitidos: `PREMIUM`, `FAMILY`.
+- `ChangePlanRequest.newPlan` — obligatorio; valores permitidos: `PREMIUM`, `FAMILY`.
+
+Se recomienda añadir `@NotNull` y `@Valid` en los DTOs y usar `@Valid` en los controladores para devolver respuestas 400 con errores de validación claros.
+
+### Mapeo de errores a HTTP (Error mapping)
+
+- `InvalidSubscriptionException` → 400 Bad Request
+- `SubscriptionCannotBeRenewedException` → 400 Bad Request
+- `SubscriptionCannotBeCanceledException` → 400 Bad Request
+- `SubscriptionDoesNotExist` → 404 Not Found
+- Excepciones no controladas → 500 Internal Server Error
 
 ## 4. Documentación por capas (detallada) -
 

@@ -94,7 +94,7 @@ A continuación se detalla cada capa del proyecto y responsabilidades:
 
 (El resto del documento mantiene las secciones previas: Ejecución, Tests.)
 
-## 4. Modelo del dominio y reglas clave 
+## Modelo del dominio y reglas clave 
 
 - `Subscription` (modelo de dominio): encapsula reglas como:
   - Validaciones al crear (userId y plan son obligatorios; plan debe ser uno de los valores del enum `SubscriptionPlan`).

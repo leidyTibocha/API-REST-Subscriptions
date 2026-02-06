@@ -32,7 +32,7 @@ public class SubscriptionScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void processSubscriptionsLifecycle() {
-        log.info("Iniciando proceso diario de ciclo de vida de suscripciones - {}", LocalDate.now());
+        log.info("Initiating daily subscription lifecycle process - {}", LocalDate.now());
 
         //We look for all those that should have ended today or earlier and are still ACTIVE or CANCELLED
         List<Subscription> expiringActive = subscriptionRepository.findAllByEndDateLessThanEqualAndStatus(LocalDate.now(), SubscriptionStatus.ACTIVE.name());
@@ -45,7 +45,7 @@ public class SubscriptionScheduler {
             try {
                 processSingleSubscription(subscription);
             } catch (Exception e) {
-                log.error("Error procesando suscripción ID: {}. Motivo: {}", subscription.getId(), e.getMessage(), e);
+                log.error("Error processing subscription ID: {}. Reason: {}", subscription.getId(), e.getMessage(), e);
             }
         }
 
@@ -55,7 +55,7 @@ public class SubscriptionScheduler {
     private void processSingleSubscription(Subscription subscription) {
         // RULE: If you have autoRenew and it's ACTIVE -> RENEW
         if (subscription.isAutoRenew() && subscription.getStatus() == SubscriptionStatus.ACTIVE) {
-            log.info("Renovando suscripción para el usuario: {}", subscription.getUserId());
+            log.info("Renewing subscription for the user: {}", subscription.getUserId());
 
             Subscription renewedSubscription = subscription.renew();
             subscription.expire();
@@ -65,7 +65,7 @@ public class SubscriptionScheduler {
         }
         //RULE: If you don't have autoRenew (it's CANCELLED) or the renewal failed -> EXPIRE
         else {
-            log.info("Expirando suscripción para el usuario: {}", subscription.getUserId());
+            log.info("User subscription expiring: {}", subscription.getUserId());
             subscription.expire();
             subscriptionRepository.saveSubscription(subscription);
         }

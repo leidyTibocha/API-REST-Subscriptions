@@ -34,10 +34,8 @@ Tecnologías principales: Java 21, Spring Boot 4.x, Spring Data JPA, MapStruct, 
 | GET    | `/all-subscriptions` | - | Obtener todas las suscripciones | **200 OK** |
 
 **Notas:**
-- Valores válidos para `plan`: **PREMIUM**, **FAMILY** (exacto, en mayúsculas).
-- Errores comunes: `InvalidSubscriptionException` → 400 Bad Request; `SubscriptionDoesNotExist` → 404 Not Found; excepciones no controladas → 500 Internal Server Error.
-- Se recomienda añadir validaciones (`@NotNull`, `@Valid`) en los DTOs para evitar entradas inválidas.
-
+- Valores válidos para `plan`: **PREMIUM**, **FAMILY** ( en mayúsculas).
+- Errores comunes: `InvalidSubscriptionException` → 400 Bad Request; `SubscriptionDoesNotExist` → 404 Not Found; excepciones no controladas → 500 Internal Server
 ---
 
 ## 3.1 Documentación automática (OpenAPI / Swagger)
@@ -56,8 +54,6 @@ La configuración (título, descripción, versión y contacto) está en `OpenApi
 - `CreateSubscriptionRequest.userId` — obligatorio.
 - `CreateSubscriptionRequest.plan` — obligatorio; valores permitidos: `PREMIUM`, `FAMILY`.
 - `ChangePlanRequest.newPlan` — obligatorio; valores permitidos: `PREMIUM`, `FAMILY`.
-
-Se recomienda añadir `@NotNull` y `@Valid` en los DTOs y usar `@Valid` en los controladores para devolver respuestas 400 con errores de validación claros.
 
 ### Mapeo de errores a HTTP (Error mapping)
 
@@ -98,7 +94,7 @@ A continuación se detalla cada capa del proyecto y responsabilidades:
 
 (El resto del documento mantiene las secciones previas: Ejecución, Tests.)
 
-## 4. Modelo del dominio y reglas clave 
+## Modelo del dominio y reglas clave 
 
 - `Subscription` (modelo de dominio): encapsula reglas como:
   - Validaciones al crear (userId y plan son obligatorios; plan debe ser uno de los valores del enum `SubscriptionPlan`).
@@ -185,7 +181,7 @@ Notas:
 
 - Clonar el repo y crear una rama para tu feature/fix.
 - Ejecutar `./mvnw.cmd test` y asegurar que todas las pruebas pasen.
-- Añadir Javadoc y actualizar la documentación en `docs/PROJECT_DOCUMENTATION.md` si introduces cambios en la API o dominio.
+- Añadir Javadoc y actualizar la documentación en `docs/PROJECT_DOCUMENTATION.md` si introduce cambios en la API o dominio.
 
 
 ---
